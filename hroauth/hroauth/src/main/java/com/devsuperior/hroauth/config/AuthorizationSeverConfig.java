@@ -1,6 +1,7 @@
 package com.devsuperior.hroauth.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -18,6 +19,12 @@ public class AuthorizationSeverConfig extends AuthorizationServerConfigurerAdapt
 
 	private static final int TEMPO_EXPIRACAO_24_HS = 60 * 60 * 24;
 
+	@Value("${oauth.client.name}")
+	private String clientName;
+	
+	@Value("${oauth.client.secret}")
+	private String clientSecret;
+	
 	@Autowired
 	private BCryptPasswordEncoder passwordEncoder;
 	
@@ -38,8 +45,8 @@ public class AuthorizationSeverConfig extends AuthorizationServerConfigurerAdapt
 	@Override
 	public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
 		clients.inMemory()
-			.withClient("myappname123")
-			.secret(passwordEncoder.encode("myappsecret123"))
+			.withClient(clientName)
+			.secret(passwordEncoder.encode(clientSecret))
 			.scopes("read", "write")
 			.authorizedGrantTypes("password")
 			.accessTokenValiditySeconds(TEMPO_EXPIRACAO_24_HS);
